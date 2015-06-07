@@ -1,7 +1,7 @@
 # mesos-env
 
 
-Build a Mesos clusters using the docker-compose and the ansible, the vagrant for development
+Build a Mesos clusters for development or test
 
 ## Run
 
