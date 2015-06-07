@@ -1,0 +1,43 @@
+---
+- hosts: all
+  sudo: yes
+  tasks:
+    - name: apt update and install
+      apt: 
+        name: "{{item}}" 
+        state: present 
+        update_cache: yes 
+        cache_valid_time: 86400
+      with_items:
+        - language-pack-ko
+        - curl
+        - wget
+
+    - name: check that docker has installed
+      shell: which docker
+      register: installed_docker
+      ignore_errors: yes
+
+    - name: install docker
+      shell: curl -sSL https://get.docker.io/ubuntu/ | sh
+      when: installed_docker|failed
+
+    - name: check that docker-compose has installed
+      shell: which docker-compose
+      register: installed_docker_compose
+      ignore_errors: yes
+
+    - name: install docker-compose
+      shell: curl -L https://github.com/docker/compose/releases/download/1.2.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose; chmod +x /usr/local/bin/docker-compose
+      when: installed_docker_compose|failed
+
+    - name: stop docker-compose processes
+      shell: docker-compose stop chdir=/vagrant
+      ignore_errors: yes
+
+    - name: remove docker-compose processes
+      shell: docker-compose rm --force chdir=/vagrant
+      ignore_errors: yes
+
+    - name: execute docker-compose up
+      shell: docker-compose up -d chdir=/vagrant

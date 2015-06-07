@@ -1,0 +1,5 @@
+[mesos_slaves]
+10.42.15.11
+
+[mesos_masters]
+10.42.15.11
